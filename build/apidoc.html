@@ -49,6 +49,8 @@
 <h1>api documentation for
     <a
 
+        href="https://github.com/yeoman/generator-chrome-extension#readme"
+
     >generator-chrome-extension (v0.6.1)</a>
 </h1>
 <h4>Scaffold out a Chrome extension</h4>
@@ -920,7 +922,23 @@
 
   return child;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+var path = require(&#x27;path&#x27;);
+var spawn = require(&#x27;child_process&#x27;).spawn;
+var yeoman = require(&#x27;yeoman-generator&#x27;);
+var _s = require(&#x27;underscore.string&#x27;);
+var mkdirp = require(&#x27;mkdirp&#x27;);
+var chromeManifest = require(&#x27;./chrome-manifest&#x27;);
+
+module.exports = yeoman.Base.<span class="apidocCodeKeywordSpan">extend</span>({
+  constructor: function (args, options, config) {
+var testLocal;
+
+yeoman.Base.apply(this, arguments);
+
+// prepare options
+this.option(&#x27;test-framework&#x27;, {
+...</pre></li>
     </ul>
 
 
@@ -1428,7 +1446,22 @@
 
   return this;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+if (this.options[&#x27;test-framework&#x27;] === &#x27;mocha&#x27;) {
+  testLocal = require.resolve(&#x27;generator-mocha/generators/app/index.js&#x27;);
+} else if (this.options[&#x27;test-framework&#x27;] === &#x27;jasmine&#x27;) {
+  testLocal = require.resolve(&#x27;generator-jasmine/generators/app/index.js&#x27;);
+}
+
+this.<span class="apidocCodeKeywordSpan">composeWith</span>(this.options[&#x27;test-framework&#x27;] + &#x27;:app&#x27;, {
+  options: {
+    &#x27;skip-install&#x27;: this.options[&#x27;skip-install&#x27;]
+  }
+}, {
+  local: testLocal
+});
+...</pre></li>
     </ul>
 
 
@@ -1453,7 +1486,23 @@
 
   return this;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    this.destinationPath(&#x27;.gitignore&#x27;),
+    {
+      babel: this.options.babel,
+      sass: this.options.sass
+    }
+  );
+
+  this.fs.<span class="apidocCodeKeywordSpan">copy</span>(
+    this.templatePath(&#x27;gitattributes&#x27;),
+    this.destinationPath(&#x27;.gitattributes&#x27;)
+  );
+},
+
+bower: function () {
+  this.copy(&#x27;bowerrc&#x27;, &#x27;.bowerrc&#x27;);
+...</pre></li>
     </ul>
 
 
@@ -1505,7 +1554,22 @@
 
   return filepath;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  this.copyjs = function copyjs(src, dest) {
+    if (!dest) {
+      dest = src;
+    }
+
+    this.fs.copyTpl(
+      this.templatePath(&#x27;scripts/&#x27; + src),
+      this.<span class="apidocCodeKeywordSpan">destinationPath</span>(this.srcScript + dest),
+      {
+        babel: this.options.babel
+      }
+    );
+  };
+},
+...</pre></li>
     </ul>
 
 
@@ -1792,7 +1856,22 @@
 
   async.parallel(commands, options.callback);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+      this.templatePath(&#x27;images/icon-128.png&#x27;),
+      this.destinationPath(&#x27;app/images/icon-128.png&#x27;)
+    );
+  },
+
+  install: function () {
+    if (!this.options[&#x27;skip-install&#x27;]) {
+      this.<span class="apidocCodeKeywordSpan">installDependencies</span>({
+        skipMessage: this.options[&#x27;skip-install-message&#x27;],
+        skipInstall: this.options[&#x27;skip-install&#x27;]
+      });
+    }
+  }
+});
+...</pre></li>
     </ul>
 
 
@@ -1892,7 +1971,23 @@
   this.parseOptions();
   return this;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+module.exports = yeoman.Base.extend({
+  constructor: function (args, options, config) {
+var testLocal;
+
+yeoman.Base.apply(this, arguments);
+
+// prepare options
+this.<span class="apidocCodeKeywordSpan">option</span>(&#x27;test-framework&#x27;, {
+  desc: &#x27;Test framework to be invoked&#x27;,
+  type: String,
+  defaults: &#x27;mocha&#x27;
+});
+
+this.option(&#x27;babel&#x27;, {
+  type: Boolean,
+...</pre></li>
     </ul>
 
 
@@ -2018,7 +2113,23 @@
   }.bind(this));
 
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  type: &#x27;checkbox&#x27;,
+  name: &#x27;permissions&#x27;,
+  message: &#x27;Would you like to set permissions?&#x27;,
+  choices: chromeManifest.permissionChoices(this.options[&#x27;all-permissions&#x27;])
+}
+    ];
+
+    this.<span class="apidocCodeKeywordSpan">prompt</span>( prompts ).then(function(answers) {
+var isChecked = function (choices, value) {
+  return choices.indexOf(value) &#x3e; -1;
+};
+
+// store information for app
+this.appname = this.locale.name = answers.name.replace(/\&#x22;/g, &#x27;\\&#x22;&#x27;);
+this.locale.description = answers.description;
+...</pre></li>
     </ul>
 
 
@@ -2374,7 +2485,22 @@
 
   return this._sourceRoot;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  desc: &#x27;All of permissions will be shown&#x27;
+});
+
+// load package
+this.pkg = require(&#x27;../package.json&#x27;);
+
+// set source root path to templates
+this.<span class="apidocCodeKeywordSpan">sourceRoot</span>(path.join(__dirname, &#x27;templates&#x27;));
+
+// set local data with appname
+this.locale = {
+  name: this.appname,
+  description: &#x27;&#x27;
+};
+...</pre></li>
     </ul>
 
 
@@ -2469,7 +2595,23 @@
 
   return filepath;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  // copy source files to scripts or scripts.babel
+  this.copyjs = function copyjs(src, dest) {
+    if (!dest) {
+      dest = src;
+    }
+
+    this.fs.copyTpl(
+      this.<span class="apidocCodeKeywordSpan">templatePath</span>(&#x27;scripts/&#x27; + src),
+      this.destinationPath(this.srcScript + dest),
+      {
+        babel: this.options.babel
+      }
+    );
+  };
+},
+...</pre></li>
     </ul>
 
 
@@ -2610,7 +2752,23 @@ return gulp.src(&#x27;app/manifest.json&#x27;)
 
   return manifest;
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+  this.templatePath(&#x27;editorconfig&#x27;),
+  this.destinationPath(&#x27;.editorconfig&#x27;)
+);
+  },
+
+  manifest: function () {
+// create manifest with basic field
+this.manifest = chromeManifest.<span class="apidocCodeKeywordSpan">createManifest</span>(this.options.manifest);
+
+// update title of popup
+if (this.options.uiAction) {
+  this.manifest[this.options.uiAction].default_title = this.appname;
+}
+
+// update keyword of omnibox
+...</pre></li>
     </ul>
 
 
@@ -2634,7 +2792,24 @@ return gulp.src(&#x27;app/manifest.json&#x27;)
 
   return getChoices(permissions);
 }</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    message: &#x27;Would you like more UI Features?&#x27;,
+    choices: chromeManifest.uiFeatureChoices
+  },
+  {
+    type: &#x27;checkbox&#x27;,
+    name: &#x27;permissions&#x27;,
+    message: &#x27;Would you like to set permissions?&#x27;,
+    choices: chromeManifest.<span class="apidocCodeKeywordSpan">permissionChoices</span>(this.options[&#x27;all-permissions&#x27
+;])
+  }
+];
+
+this.prompt( prompts ).then(function(answers) {
+  var isChecked = function (choices, value) {
+    return choices.indexOf(value) &#x3e; -1;
+  };
+...</pre></li>
     </ul>
 
 
